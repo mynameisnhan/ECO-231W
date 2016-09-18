@@ -1,0 +1,62 @@
+library(foreign)
+library(stats)
+library(MASS)
+library(dplyr)
+library(xlsx)
+
+df <- read.dta("data_crime_schoolcalendar.dta")
+xl <- read.xlsx("crime_age.xlsx", 2)
+
+hist(df$n_arrest/df$population, xlab="Crime Clearance Rate", main="Histogram of Crime Clearance Rate")
+hist(df$n_crime_viol/df$population, xlab="Violent Crime Incidence Rate", main="Histogram of Violent Crime Incidence Rate")
+hist(df$n_crime_prop/df$population, xlab="Property Crime Incidence Rate", main="Histogram of Property Crime Incidence Rate")
+
+## Day type vs crime rate regression.
+
+## Violent crime.
+violent_crime_rate <- glm.nb(df$n_crime_viol/df$population ~ df$day_type)
+summary(violent_crime_rate)
+
+## Property crime.
+property_crime_rate <- glm.nb(df$n_crime_prop/df$population ~ df$day_type)
+summary(property_crime_rate)
+
+
+## Risk factor vs clearance rate regression.
+
+## Overall.
+viol_crime_percent <- df$n_crime_viol/df$population
+prop_crime_percent <- df$n_crime_prop/df$population
+clearance_rate_overall <- glm.nb(df$n_arrest/df$n_crime ~ prop_crime_percent + viol_crime_percent + df$p_unemployed + df$p_black + df$p_hsdegree + df$p_bsdegree + df$p_popunder15 + df$p_pop15_24 + df$p_pop25_34 + df$p_pop35_54 + df$p_male + df$day_type + df$population)
+summary(clearance_rate_overall)
+
+## School day with attendance.
+df.school_day_attendance <- df %>% filter(df$day_type == "School day with attendence")
+
+clearance_rate_attendance <- glm.nb(df$n_arrest/df$n_crime ~ df$n_crime_viol/df$population + df$n_crime_prop/df$population + df$p_unemployed + df$p_black + df$p_hsdegree + df$p_bsdegree + df$p_popunder15 + df$p_pop15_24 + df$p_pop25_34 + df$p_pop35_54 + df$p_male, data = df.school_day_attendance)
+summary(clearance_rate_attendance)
+
+
+## School day with no attendance.
+df.school_day_no_attendance <- df %>% filter(df$day_type == "School day with no attendence")
+
+clearance_rate_no_attendance <- glm.nb(df$n_arrest/df$n_crime ~ df$n_crime_viol/df$population + df$n_crime_prop/df$population + df$p_unemployed + df$p_black + df$p_hsdegree + df$p_bsdegree + df$p_popunder15 + df$p_pop15_24 + df$p_pop25_34 + df$p_pop35_54 + df$p_male, data = df.school_day_no_attendance)
+summary(clearance_rate_no_attendance)
+
+## Weekend.
+df.weekend <- df %>% filter(df$day_type == "Weekend")
+
+clearance_rate_weekend <- glm.nb(df$n_arrest/df$n_crime ~ df$n_crime_viol/df$population + df$n_crime_prop/df$population + df$p_unemployed + df$p_black + df$p_hsdegree + df$p_bsdegree + df$p_popunder15 + df$p_pop15_24 + df$p_pop25_34 + df$p_pop35_54 + df$p_male, data = df.weekend)
+summary(clearance_rate_weekend)
+
+## Summer break.
+df.summer_break <- df %>% filter(df$day_type == "Summer break")
+
+clearance_rate_summer_break <- glm.nb(df$n_arrest/df$n_crime ~ df$n_crime_viol/df$population + df$n_crime_prop/df$population + df$p_unemployed + df$p_black + df$p_hsdegree + df$p_bsdegree + df$p_popunder15 + df$p_pop15_24 + df$p_pop25_34 + df$p_pop35_54 + df$p_male, data = df.summer_break)
+summary(clearance_rate_summer_break)
+
+## Holiday.
+df.holiday <- df %>% filter(df$day_type == "Holiday")
+
+clearance_rate_holiday <- glm.nb(df$n_arrest/df$n_crime ~ df$n_crime_viol/df$population + df$n_crime_prop/df$population + df$p_unemployed + df$p_black + df$p_hsdegree + df$p_bsdegree + df$p_popunder15 + df$p_pop15_24 + df$p_pop25_34 + df$p_pop35_54 + df$p_male, data = df.holiday)
+summary(clearance_rate_holiday)
