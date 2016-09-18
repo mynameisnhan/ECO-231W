@@ -3,8 +3,8 @@
 library(foreign)
 library(stats)
 bwght.df <- read.dta(file.choose())
-bwght <- lm(bwght.df$bwght ~ bwght.df$cigs + bwght.df$motheduc + bwght.df$parity + bwght.df$male) # Standard linear regression
-summary(bwght) # Table of coefficients
+bwght <- lm(bwght.df$bwght ~ bwght.df$cigs + bwght.df$motheduc + bwght.df$parity + bwght.df$male) # Standard linear regression.
+summary(bwght) # Table of coefficients.
 
 ## B_0 indicates that the birth weight is 110.490 oz if the mother has 0 cig consumption and education and the child is female and first-born.
 
@@ -19,13 +19,13 @@ summary(bwght) # Table of coefficients
 ## 1B
 
 library(MASS)
-bwght_robust <- rlm(bwght.df$bwght ~ bwght.df$cigs + bwght.df$motheduc + bwght.df$parity + bwght.df$male) # Robust linear regression
-summary(bwght_robust) # Table of coefficients
+bwght_robust <- rlm(bwght.df$bwght ~ bwght.df$cigs + bwght.df$motheduc + bwght.df$parity + bwght.df$male) # Robust linear regression.
+summary(bwght_robust) # Table of coefficients.
 
 ## For B_1, the homoskedastic error is 0.0923 and the heteroskedastic error is 0.0869.
 
 ## 1C
-confint(bwght, "bwght.df$motheduc") # Confidence interval for motheduc
+confint(bwght, "bwght.df$motheduc") # Confidence interval for motheduc.
 
 ## The 95% confidence interval for B_2 is (-0.0635, 0.8508).
 
